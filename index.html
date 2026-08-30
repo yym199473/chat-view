@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>聊天记录</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+body{
+  margin:0;
+  background:#ededed;
+  color:#191919;
+  font-family:-apple-system,BlinkMacSystemFont,
+  "Helvetica Neue","PingFang SC","Microsoft YaHei",Arial,sans-serif;
+}
+
+.header{
+  height:52px;
+  background:#ededed;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:sticky;
+  top:0;
+  z-index:10;
+  border-bottom:1px solid #ddd;
+}
+
+.back{
+  position:absolute;
+  left:16px;
+  font-size:30px;
+}
+
+.title{
+  font-size:17px;
+  font-weight:600;
+}
+
+.more{
+  position:absolute;
+  right:18px;
+  font-size:25px;
+  letter-spacing:2px;
+}
+
+.card{
+  background:#fff;
+  margin:12px;
+  border-radius:5px;
+  overflow:hidden;
+}
+
+.card-title{
+  padding:17px 16px 12px;
+  font-size:17px;
+  font-weight:600;
+}
+
+.chat{
+  padding:0 16px;
+}
+
+.item{
+  display:flex;
+  padding:14px 0;
+  border-bottom:1px solid #eee;
+}
+
+.item:last-child{
+  border-bottom:none;
+}
+
+.avatar{
+  width:42px;
+  height:42px;
+  border-radius:4px;
+  object-fit:cover;
+  flex:none;
+  background:#07c160;
+}
+
+.content{
+  margin-left:11px;
+  min-width:0;
+  flex:1;
+}
+
+.name{
+  color:#576b95;
+  font-size:14px;
+  margin-bottom:5px;
+}
+
+.text{
+  font-size:16px;
+  line-height:1.55;
+  word-break:break-word;
+}
+
+.time{
+  color:#b2b2b2;
+  font-size:12px;
+  margin-top:6px;
+}
+
+.photo{
+  display:block;
+  margin
