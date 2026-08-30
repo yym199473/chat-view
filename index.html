@@ -2,194 +2,62 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>聊天记录</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>wR~与文件传输助手的聊天记录</title>
+<meta name="description" content="wR~：[图片] wR~：[图片] wR~：[图片]">
+<meta property="og:type" content="website">
+<meta property="og:title" content="wR~与文件传输助手的聊天记录">
+<meta property="og:description" content="wR~：[图片] wR~：[图片] wR~：[图片]">
+<meta property="og:image" content="https://yym199473.github.io/chat-view/avatar.jpg">
+<meta property="og:url" content="https://yym199473.github.io/chat-view/">
 <style>
-*{
-  box-sizing:border-box;
-}
-
-body{
-  margin:0;
-  background:#ededed;
-  color:#191919;
-  font-family:-apple-system,BlinkMacSystemFont,
-  "PingFang SC","Microsoft YaHei",Arial,sans-serif;
-}
-
-.header{
-  height:52px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  position:relative;
-  background:#ededed;
-  border-bottom:1px solid #ddd;
-}
-
-.back{
-  position:absolute;
-  left:16px;
-  font-size:30px;
-}
-
-.title{
-  font-size:17px;
-  font-weight:600;
-}
-
-.more{
-  position:absolute;
-  right:18px;
-  font-size:22px;
-}
-
-.card{
-  margin:12px;
-  background:white;
-  border-radius:6px;
-  overflow:hidden;
-}
-
-.card-title{
-  padding:17px 16px 10px;
-  font-size:17px;
-  font-weight:600;
-}
-
-.chat{
-  padding:0 16px;
-}
-
-.item{
-  display:flex;
-  padding:15px 0;
-  border-bottom:1px solid #eeeeee;
-}
-
-.item:last-child{
-  border-bottom:0;
-}
-
-.avatar{
-  width:42px;
-  height:42px;
-  border-radius:4px;
-  background:#07c160;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:white;
-  font-size:20px;
-  flex:none;
-}
-
-.content{
-  margin-left:11px;
-  flex:1;
-}
-
-.name{
-  color:#576b95;
-  font-size:14px;
-  margin-bottom:5px;
-}
-
-.text{
-  font-size:16px;
-  line-height:1.55;
-  word-break:break-word;
-}
-
-.time{
-  color:#b2b2b2;
-  font-size:12px;
-  margin-top:6px;
-}
-
-.footer{
-  padding:15px;
-  text-align:center;
-  color:#999;
-  font-size:12px;
-}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:#fff;color:#111;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Arial,sans-serif}
+.shell{max-width:720px;margin:0 auto;min-height:100vh;background:#fff}
+.top{height:58px;display:flex;align-items:center;justify-content:center;position:sticky;top:0;background:#fff;z-index:10}
+.back{position:absolute;left:20px;font-size:34px;font-weight:300;line-height:1}
+.more{position:absolute;right:20px;font-size:25px;letter-spacing:2px}
+.title{font-size:20px;font-weight:600;text-align:center;max-width:72%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.date{text-align:center;color:#7c7c7c;font-size:15px;margin-top:-2px;padding-bottom:18px}
+.list{padding:0 26px 30px}
+.item{padding:17px 0;border-bottom:1px solid #ececec}
+.head{display:flex;justify-content:space-between;align-items:center;margin-left:58px;margin-bottom:7px}
+.name{font-size:14px;color:#777}
+.time{font-size:14px;color:#b2b2b2}
+.row{display:flex;align-items:flex-start;gap:13px}
+.avatar{width:46px;height:46px;border-radius:5px;object-fit:cover;flex:0 0 auto}
+.text{font-size:18px;line-height:1.55;white-space:pre-wrap;word-break:break-word;flex:1;margin-top:-1px}
+.footer{padding:16px 26px;color:#888;font-size:14px}
 </style>
 </head>
-
 <body>
-
-<div class="header">
-  <div class="back">‹</div>
-  <div class="title">聊天记录</div>
-  <div class="more">•••</div>
+<div class="shell">
+  <div class="top"><div class="back">‹</div><div class="title" id="pageTitle">聊天记录</div><div class="more">•••</div></div>
+  <div class="date" id="date"></div>
+  <div class="list" id="list"></div>
+  <div class="footer" id="footer"></div>
 </div>
-
-<div class="card">
-
-  <div class="card-title">
-    聊天记录
-  </div>
-
-  <div class="chat">
-
-    <div class="item">
-      <div class="avatar">A</div>
-
-      <div class="content">
-        <div class="name">用户A</div>
-
-        <div class="text">
-          这里是第一条聊天内容。
-        </div>
-
-        <div class="time">
-          2026年8月31日 03:45
-        </div>
-      </div>
-    </div>
-
-
-    <div class="item">
-      <div class="avatar">B</div>
-
-      <div class="content">
-        <div class="name">用户B</div>
-
-        <div class="text">
-          这里是第二条聊天内容，之后可以直接修改这里的文字。
-        </div>
-
-        <div class="time">
-          2026年8月31日 03:46
-        </div>
-      </div>
-    </div>
-
-
-    <div class="item">
-      <div class="avatar">A</div>
-
-      <div class="content">
-        <div class="name">用户A</div>
-
-        <div class="text">
-          网站部署测试成功。
-        </div>
-
-        <div class="time">
-          2026年8月31日 03:47
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="footer">
-    聊天记录展示页面
-  </div>
-
-</div>
-
+<script>
+async function load(){
+  const r=await fetch('data.json?ts='+Date.now(),{cache:'no-store'});
+  const d=await r.json();
+  pageTitle.textContent=d.pageTitle||'聊天记录';
+  date.textContent=d.date||'';
+  footer.textContent=d.footer||'';
+  list.innerHTML='';
+  (d.records||[]).forEach(x=>{
+    const el=document.createElement('div');
+    el.className='item';
+    el.innerHTML=`
+      <div class="head"><span class="name"></span><span class="time"></span></div>
+      <div class="row"><img class="avatar" src="avatar.jpg?ts=${Date.now()}"><div class="text"></div></div>`;
+    el.querySelector('.name').textContent=x.name||'';
+    el.querySelector('.time').textContent=x.time||'';
+    el.querySelector('.text').textContent=x.text||'';
+    list.appendChild(el);
+  });
+}
+load();
+</script>
 </body>
 </html>

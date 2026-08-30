@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>聊天记录编辑器</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f5f5;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Arial,sans-serif;color:#111}
+.wrap{max-width:720px;margin:0 auto;padding:14px}.card{background:#fff;border-radius:12px;padding:14px;margin-bottom:12px}
+h2{font-size:20px;margin:4px 0 14px}label{font-size:13px;color:#666;display:block;margin:10px 0 6px}
+input,textarea{width:100%;border:1px solid #ddd;border-radius:8px;padding:11px;font-size:16px;background:#fff}
+textarea{min-height:90px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.msg{border-top:1px solid #eee;padding-top:12px;margin-top:12px}.buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+button{border:0;border-radius:8px;padding:11px 14px;font-size:15px}.primary{background:#07c160;color:#fff}.light{background:#eee}.danger{background:#ffe9e9;color:#b21d1d}
+.preview{display:flex;align-items:center;gap:10px}.preview img{width:56px;height:56px;border-radius:8px;object-fit:cover}
+.small{font-size:12px;color:#888;line-height:1.5}.status{font-size:13px;margin-top:10px;white-space:pre-wrap}
+</style>
+</head>
+<body><div class="wrap">
+<div class="card"><h2>只有你自己用的编辑器</h2>
+<div class="small">首次使用需要输入 GitHub Fine-grained Token。Token 只保存在你这台手机的浏览器 localStorage，不会写进网页源码。</div>
+<label>GitHub Token</label><input id="token" type="password" placeholder="github_pat_...">
+<div class="buttons"><button class="light" onclick="saveToken()">保存 Token 到本机</button><button class="light" onclick="clearToken()">清除 Token</button></div>
+</div>
+
+<div class="card">
+<label>分享卡片标题</label><input id="shareTitle">
+<label>分享卡片摘要（换行会变成空格显示）</label><textarea id="shareDescription"></textarea>
+<label>打开网页后的顶部标题</label><input id="pageTitle">
+<label>日期</label><input id="date">
+<label>底部“聊天记录”等文字</label><input id="footer">
+</div>
+
+<div class="card">
+<h2>头像</h2>
+<div class="preview"><img id="avatarPreview" src="avatar.jpg"><input id="avatarFile" type="file" accept="image/*"></div>
+</div>
+
+<div class="card"><h2>消息</h2><div id="messages"></div>
+<div class="buttons"><button class="light" onclick="addMessage()">＋添加消息</button></div></div>
+
+<div class="card"><div class="buttons"><button class="primary" onclick="saveAll()">保存并发布</button></div><div id="status" class="status"></div></div>
+</div>
+<script>
+const OWNER='yym199473', REPO='chat-view', BRANCH='main';
+let data={records:[]};
+const $=id=>document.getElementById(id);
+function token(){return $('token').value.trim()}
+function saveToken(){localStorage.setItem('gh_token',token()); status.textContent='Token 已保存在本机。'}
+function clearToken(){localStorage.removeItem('gh_token'); $('token').value=''; status.textContent='Token 已清除。'}
+async function load(){
+  $('token').value=localStorage.getItem('gh_token')||'';
+  const r=await fetch('data.json?ts='+Date.now(),{cache:'no-store'});
+  data=await r.json();
+  shareTitle.value=data.shareTitle||''; shareDescription.value=data.shareDescription||''; pageTitle.value=data.pageTitle||''; date.value=data.date||''; footer.value=data.footer||'';
+  renderMessages();
+}
+function renderMessages(){
+  messages.innerHTML='';
+  data.records.forEach((m,i)=>{
+    const d=document.createElement('div'); d.className='msg';
+    d.innerHTML=`<div class="row"><div><label>姓名</label><input data-k="name" value="${escAttr(m.name||'')}"></div><div><label>时间</label><input data-k="time" value="${escAttr(m.time||'')}"></div></div>
+    <label>内容</label><textarea data-k="text">${esc(m.text||'')}</textarea>
+    <div class="buttons"><button class="danger" onclick="removeMessage(${i})">删除这条</button></div>`;
+    d.querySelectorAll('[data-k]').forEach(el=>el.oninput=()=>{data.records[i][el.dataset.k]=el.value});
+    messages.appendChild(d);
+  });
+}
+function addMessage(){data.records.push({name:'wR~',time:'',text:''});renderMessages()}
+function removeMessage(i){data.records.splice(i,1);renderMessages()}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function escAttr(s){return esc(s).replace(/"/g,'&quot;')}
+async function gh(path,opts={}){
+  const t=token(); if(!t) throw new Error('请先输入 GitHub Token');
+  const r=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+path,{
+    ...opts,headers:{'Accept':'application/vnd.github+json','Authorization':'Bearer '+t,'X-GitHub-Api-Version':'2022-11-28',...(opts.headers||{})}
+  });
+  if(!r.ok) throw new Error(path+'：'+r.status+' '+await r.text());
+  return r.json();
+}
+function b64utf8(s){return btoa(unescape(encodeURIComponent(s)))}
+function utf8b64(s){return decodeURIComponent(escape(atob(s.replace(/\n/g,''))))}
+async function putText(path,text,msg){
+  let sha=null; try{sha=(await gh(path)).sha}catch(e){}
+  return gh(path,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg,content:b64utf8(text),branch:BRANCH,...(sha?{sha}:{})})})
+}
+async function putBinary(path,base64,msg){
+  let sha=null; try{sha=(await gh(path)).sha}catch(e){}
+  return gh(path,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg,content:base64,branch:BRANCH,...(sha?{sha}:{})})})
+}
+async function saveAll(){
+  try{
+    status.textContent='正在保存…';
+    data.shareTitle=shareTitle.value; data.shareDescription=shareDescription.value; data.pageTitle=pageTitle.value; data.date=date.value; data.footer=footer.value;
+    const f=avatarFile.files[0];
+    if(f){
+      const base64=await new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(fr.result.split(',')[1]);fr.onerror=rej;fr.readAsDataURL(f)});
+      await putBinary('avatar.jpg',base64,'Update avatar');
+    }
+    await putText('data.json',JSON.stringify(data,null,2),'Update chat content');
+    const ix=await gh('index.html'); let html=utf8b64(ix.content);
+    const safe=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    html=html.replace(/<title>.*?<\/title>/s,'<title>'+safe(data.shareTitle)+'</title>')
+      .replace(/<meta name="description" content=".*?">/s,'<meta name="description" content="'+safe(data.shareDescription.replace(/\n/g,' '))+'">')
+      .replace(/<meta property="og:title" content=".*?">/s,'<meta property="og:title" content="'+safe(data.shareTitle)+'">')
+      .replace(/<meta property="og:description" content=".*?">/s,'<meta property="og:description" content="'+safe(data.shareDescription.replace(/\n/g,' '))+'">');
+    await gh('index.html',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:'Update share metadata',content:b64utf8(html),branch:BRANCH,sha:ix.sha})});
+    status.textContent='保存成功。GitHub Pages 通常几十秒到几分钟更新。';
+  }catch(e){status.textContent='保存失败：'+e.message}
+}
+load();
+</script>
+</body></html>
