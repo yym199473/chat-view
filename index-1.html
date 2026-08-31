@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>wR~与糯米的聊天记录</title>
+<meta name="description" content="wR~：猪鸡猴兔蛇  wR~：42-76">
+<meta property="og:type" content="website">
+<meta property="og:title" content="wR~与糯米的聊天记录">
+<meta property="og:description" content="wR~：猪鸡猴兔蛇  wR~：42-76">
+<meta property="og:image" content="https://yym199473.github.io/chat-view/avatar.jpg">
+<meta property="og:url" content="https://yym199473.github.io/chat-view/">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:#fff;color:#111;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Arial,sans-serif}
+.shell{max-width:720px;margin:0 auto;min-height:100vh;background:#fff}
+.top{padding:24px 26px 0;text-align:center;background:#fff}
+.title{font-size:20px;font-weight:600;line-height:1.35;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.date{text-align:center;color:#7c7c7c;font-size:15px;padding-top:2px;padding-bottom:17px}
+.list{padding:0 27px 30px}
+.item{position:relative;min-height:118px;padding:17px 0 18px 80px;border-bottom:1px solid #ececec}
+.head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+.name{font-size:14px;color:#777}
+.time{font-size:14px;color:#b2b2b2}
+.row{display:block}
+.avatar{position:absolute;left:0;top:17px;width:66px;height:66px;border-radius:5px;object-fit:contain;background:#fff;flex:0 0 auto}
+.text{font-size:18px;line-height:1.45;white-space:pre-wrap;word-break:break-word}
+.footer{display:none}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top"><div class="title" id="pageTitle">wR~与糯米的聊天记录</div></div>
+  <div class="date" id="date"></div>
+  <div class="list" id="list"></div>
+  <div class="footer" id="footer"></div>
+</div>
+<script>
+async function load(){
+  const r=await fetch('data.json?ts='+Date.now(),{cache:'no-store'});
+  const d=await r.json();
+  pageTitle.textContent=d.pageTitle||'聊天记录';
+  date.textContent=d.date||'';
+  footer.textContent=d.footer||'';
+  list.innerHTML='';
+  (d.records||[]).forEach(x=>{
+    const el=document.createElement('div');
+    el.className='item';
+    el.innerHTML=`
+      <div class="head"><span class="name"></span><span class="time"></span></div>
+      <div class="row"><img class="avatar" src="avatar.jpg?ts=${Date.now()}"><div class="text"></div></div>`;
+    el.querySelector('.name').textContent=x.name||'';
+    el.querySelector('.time').textContent=x.time||'';
+    el.querySelector('.text').textContent=x.text||'';
+    list.appendChild(el);
+  });
+}
+load();
+</script>
+</body>
+</html>
