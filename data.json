@@ -1,29 +1,8 @@
 {
+  "records": [],
+  "shareTitle": "",
+  "shareDescription": "",
   "pageTitle": "",
-  "date": "2026年8月31日",
-  "shareTitle": "wR~与文件传输助手的聊天记录",
-  "shareDescription": "wR~：[777]\nwR~：[666]\n",
-  "footer": "聊天记录",
-  "records": [
-    {
-      "name": "wR~",
-      "time": "09:35:27",
-      "text": "这里可以修改聊天内容"
-    },
-    {
-      "name": "wR~",
-      "time": "09:36:05",
-      "text": "777"
-    },
-    {
-      "name": "wR~",
-      "time": "",
-      "text": ""
-    },
-    {
-      "name": "wR~",
-      "time": "",
-      "text": ""
-    }
-  ]
+  "date": "",
+  "footer": ""
 }
