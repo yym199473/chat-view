@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>fyhj~与糯米的聊天记录</title>
+<meta name="description" content="fyhj~：牛猪狗虎兔5友×10&#10;fyhj~：马兔龙蛇虎5友×40&#10;聊天记录">
+<meta property="og:type" content="website">
+<meta property="og:title" content="fyhj~与糯米的聊天记录">
+<meta property="og:description" content="fyhj~：牛猪狗虎兔5友×10&#10;fyhj~：马兔龙蛇虎5友×40&#10;聊天记录">
+<meta property="og:image" content="https://yym199473.github.io/chat-view/white.jpg?v=1788193303709&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;v=1788193894113&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;v=1788195323289&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;v=1788201535056&amp;amp;amp;amp;amp;amp;amp;amp;amp;v=1788201698071&amp;amp;amp;amp;amp;amp;amp;amp;amp;v=1788201714474&amp;amp;amp;amp;amp;amp;amp;amp;v=1788268833246&amp;amp;amp;amp;amp;amp;amp;v=1788269089517&amp;amp;amp;amp;amp;amp;v=1788270080271&amp;amp;amp;amp;amp;v=1788270608763&amp;amp;amp;amp;v=1788271926913&amp;amp;amp;v=1788342345935&amp;amp;v=1788342402434&amp;amp;v=1788342408747&amp;v=1788342731210">
+<meta property="og:url" content="https://yym199473.github.io/chat-view/">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* 仅增加公开页禁止选择/长按复制，不改变现有布局 */
+html,body,.shell,.list,.item,.head,.name,.time,.row,.text,.date{
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  -webkit-touch-callout:none!important;
+}
+html,body{margin:0;padding:0;background:#fff;color:#111;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Arial,sans-serif}
+.shell{width:100%;max-width:none;margin:0;min-height:100vh;background:#fff}
+/* 微信顶部已经显示网页标题；正文只显示日期，不重复标题 */
+.top,.footer{display:none}
+.date{display:block;text-align:center;color:#888;font-size:14px;line-height:1.3;padding:0 0 8px;margin-top:0}
+.list{padding:0 15px 30px}
+.item{position:relative;min-height:62px;padding:8px 0 8px 45px}
+.item::after{content:"";position:absolute;left:45px;right:0;bottom:0;height:1px;background:#ededed}
+.head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px;line-height:1.25}
+.name{font-size:11px;color:#777}
+.time{font-size:11px;color:#b5b5b5;white-space:nowrap;letter-spacing:0}
+.row{display:block}
+.avatar{position:absolute;left:0;top:8px;width:38px;height:38px;border-radius:3px;object-fit:cover;background:#fff}
+.item:not(:first-child) .avatar{display:none!important}
+.text{font-size:16px;line-height:1.32;white-space:pre-wrap;word-break:break-word}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top"><div class="title" id="pageTitle">wR~与糯米的聊天记录</div></div>
+  <div class="date" id="date"></div>
+  <div class="list" id="list"></div>
+  <div class="footer" id="footer"></div>
+</div>
+
+<script>
+async function load(){
+  const fallback = {
+    pageTitle: 'wR~与糯米的聊天记录',
+    date: '2026年8月31日',
+    footer: '',
+    records: [
+      {name:'wR~', time:'09:35:27', text:'这里可以修改聊天内容'},
+      {name:'wR~', time:'09:36:05', text:'777'}
+    ]
+  };
+
+  let d = fallback;
+  try{
+    const r = await fetch('./data.json?ts=' + Date.now(), {cache:'no-store'});
+    if(!r.ok) throw new Error('data.json HTTP ' + r.status);
+    const j = await r.json();
+    if(j && typeof j === 'object') d = {...fallback, ...j};
+  }catch(e){
+    console.warn('data.json 加载失败，使用页面内置内容：', e);
+  }
+
+  const pageTitleEl = document.getElementById('pageTitle');
+  const dateEl = document.getElementById('date');
+  const footerEl = document.getElementById('footer');
+  const listEl = document.getElementById('list');
+
+  if(pageTitleEl) pageTitleEl.textContent = d.pageTitle || fallback.pageTitle;
+  document.title = d.pageTitle || fallback.pageTitle;
+  if(dateEl) dateEl.textContent = d.date || fallback.date;
+  if(footerEl) footerEl.textContent = d.footer || '';
+  if(!listEl) return;
+
+  listEl.innerHTML = '';
+  const records = Array.isArray(d.records) && d.records.length ? d.records : fallback.records;
+
+  records.forEach((x,i)=>{
+    const el = document.createElement('div');
+    el.className = 'item';
+    el.innerHTML = `
+      <div class="head"><span class="name"></span><span class="time"></span></div>
+      <div class="row">${i === 0 ? `<img class="avatar" src="./avatar.jpg?ts=${Date.now()}" alt="">` : ``}<div class="text"></div></div>`;
+    el.querySelector('.name').textContent = x.name || '';
+    el.querySelector('.time').textContent = String(x.time || '').replace(/[\s\u3000]+/g,'').replace(/[：﹕]/g,':');
+    el.querySelector('.text').textContent = x.text || '';
+    listEl.appendChild(el);
+  });
+}
+load();
+
+// 禁止公开页面复制、剪切、右键菜单和文字选择
+['copy','cut','contextmenu','selectstart'].forEach(type => {
+  document.addEventListener(type, e => e.preventDefault());
+});
+</script>
+
+</body>
+</html>
